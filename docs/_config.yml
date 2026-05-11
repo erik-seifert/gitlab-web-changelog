@@ -1,0 +1,7 @@
+title: GitLab Changelog Generator
+description: >
+  Chrome extension that generates changelogs between GitLab tags —
+  lists linked issues and commits, exports to Markdown, and publishes to a GitLab wiki.
+theme: cayman
+github:
+  is_project_page: true
