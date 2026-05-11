@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>GitLab Changelog – Options</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>GitLab Changelog Generator</h1>
+        <p class="subtitle">Configure the GitLab instances where this extension should run.</p>
+      </header>
+
+      <section class="add-section">
+        <h2>Add Instance</h2>
+        <p>Enter the base URL of your GitLab instance (e.g. <code>https://gitlab.example.com</code>).</p>
+        <div class="row">
+          <input
+            type="text"
+            id="new-instance-url"
+            placeholder="https://gitlab.example.com"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <input
+            type="text"
+            id="new-instance-label"
+            placeholder="Label (optional)"
+            autocomplete="off"
+          />
+          <button id="add-instance-btn" class="primary">Add &amp; Grant Permission</button>
+        </div>
+        <div id="add-status" class="status"></div>
+      </section>
+
+      <section class="list-section">
+        <h2>Configured Instances</h2>
+        <div id="instance-list" class="instance-list">
+          <p class="empty-msg">No instances configured yet.</p>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h2>Advanced Settings</h2>
+
+        <div class="row">
+          <label for="branch-regex">Branch issue regex:</label>
+          <input
+            type="text"
+            id="branch-regex"
+            placeholder="^(\d+)[-_]"
+            autocomplete="off"
+            spellcheck="false"
+            style="flex:1;font-family:monospace"
+          />
+          <button id="save-settings-btn" class="primary">Save</button>
+        </div>
+        <p class="hint">Must contain exactly one capture group for the issue number. Leave empty to disable.</p>
+        <ul class="hint">
+          <li><code>^(\d+)[-_]</code> — matches <code>757-fix-graphql-field</code></li>
+          <li><code>(?:^|\/)(\d+)[-_]</code> — matches <code>feature/757-fix-graphql-field</code></li>
+        </ul>
+        <div id="settings-status" class="status"></div>
+      </section>
+
+      <section class="help-section">
+        <h2>How It Works</h2>
+        <ol>
+          <li>Add the base URL of each GitLab instance you use.</li>
+          <li>Chrome will ask for permission to run on that host — accept it.</li>
+          <li>Visit any project's <code>/-/tags</code> page on that instance.</li>
+          <li>An icon appears next to each tag — click it to generate a changelog.</li>
+        </ol>
+        <p>The extension uses your existing logged-in session (cookies). No API tokens needed.</p>
+      </section>
+    </div>
+
+    <script src="options.js"></script>
+  </body>
+</html>

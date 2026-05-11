@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="20" fill="#6e49cb"/>
+  <path fill="#ffffff" d="M22 28a8 8 0 0 1 8-8h36a8 8 0 0 1 5.66 2.34l40 40a8 8 0 0 1 0 11.32l-36 36a8 8 0 0 1-11.32 0l-40-40A8 8 0 0 1 22 64V28zm14 8a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/>
+  <text x="64" y="92" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="32" fill="#6e49cb">CL</text>
+</svg>

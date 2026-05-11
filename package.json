@@ -1,0 +1,22 @@
+{
+  "name": "gitlab-changelog-extension",
+  "version": "1.4.0",
+  "private": true,
+  "scripts": {
+    "test": "jest --coverage",
+    "publish:patch": "node scripts/publish.mjs patch",
+    "publish:minor": "node scripts/publish.mjs minor",
+    "publish:major": "node scripts/publish.mjs major"
+  },
+  "devDependencies": {
+    "archiver": "^7.0.1",
+    "chrome-webstore-upload": "^2.0.0",
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/test/**/*.test.js"
+    ]
+  }
+}

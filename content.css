@@ -1,0 +1,595 @@
+/* Icon button injected next to each tag */
+.glcg-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-left: 6px;
+  padding: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #6e49cb;
+  border-radius: 4px;
+  cursor: pointer;
+  vertical-align: middle;
+  transition: background 0.15s, border-color 0.15s;
+}
+.glcg-icon-btn:hover {
+  background: rgba(110, 73, 203, 0.1);
+  border-color: rgba(110, 73, 203, 0.3);
+}
+.glcg-icon-btn svg {
+  display: block;
+}
+
+/* Modal */
+.glcg-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+.glcg-modal {
+  background: #fff;
+  color: #333;
+  border-radius: 8px;
+  width: min(900px, 90vw);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+.glcg-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e5e5;
+  background: #fafafa;
+}
+.glcg-modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+.glcg-close {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 0 4px;
+  line-height: 1;
+}
+.glcg-close:hover {
+  color: #000;
+}
+.glcg-modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+.glcg-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.glcg-row label {
+  font-weight: 600;
+  min-width: 120px;
+}
+.glcg-ac-wrap {
+  flex: 1;
+  position: relative;
+}
+.glcg-ac-wrap input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+}
+.glcg-ac-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.glcg-ac-list[hidden] {
+  display: none;
+}
+.glcg-ac-item {
+  padding: 7px 10px;
+  cursor: pointer;
+  line-height: 1.4;
+}
+.glcg-ac-item:hover {
+  background: #f0ecff;
+}
+.glcg-ac-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+.glcg-ac-path {
+  display: block;
+  font-size: 11px;
+  color: #888;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+}
+
+.glcg-row select,
+.glcg-row button {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  background: #fff;
+}
+.glcg-row select {
+  min-width: 240px;
+}
+.glcg-row .glcg-generate {
+  background: #6e49cb;
+  color: #fff;
+  border-color: #6e49cb;
+  cursor: pointer;
+  font-weight: 600;
+}
+.glcg-row .glcg-generate:hover:not(:disabled) {
+  background: #5a3aa8;
+}
+.glcg-row .glcg-generate:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.glcg-row .glcg-swap {
+  cursor: pointer;
+}
+.glcg-row .glcg-swap:hover {
+  background: #f0f0f0;
+}
+.glcg-from-tag {
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  background: #f3f3f3;
+  padding: 4px 8px;
+  border-radius: 3px;
+}
+.glcg-status {
+  font-style: italic;
+  color: #666;
+  margin: 10px 0;
+  min-height: 20px;
+}
+
+/* Wiki publish panel */
+.glcg-wiki-panel {
+  background: #f5f4fb;
+  border: 1px solid #d8d4f0;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 10px 0 4px;
+}
+.glcg-wiki-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.glcg-wiki-row label {
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
+  min-width: 70px;
+}
+.glcg-wiki-parent {
+  flex: 1;
+  min-width: 100px;
+}
+.glcg-wiki-slug {
+  flex: 1;
+  min-width: 100px;
+}
+.glcg-wiki-row input[type="text"] {
+  padding: 5px 8px;
+  border: 1px solid #c0b8e8;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  background: #fff;
+}
+.glcg-wiki-sep {
+  font-size: 16px;
+  font-weight: bold;
+  color: #6e49cb;
+}
+.glcg-wiki-preview {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 10px;
+}
+.glcg-wiki-preview code {
+  background: #ebe8f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+}
+.glcg-wiki-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.glcg-wiki-footer button {
+  padding: 5px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  background: #fff;
+}
+.glcg-wiki-footer button.primary {
+  background: #6e49cb;
+  color: #fff;
+  border-color: #6e49cb;
+}
+.glcg-wiki-footer button.primary:hover:not(:disabled) {
+  background: #5a3aa8;
+}
+.glcg-wiki-footer button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.glcg-wiki-status {
+  font-size: 13px;
+  color: #555;
+}
+.glcg-wiki-status a {
+  color: #6e49cb;
+  font-weight: 600;
+}
+
+/* Changelog */
+.glcg-changelog {
+  border-top: 1px solid #e5e5e5;
+  margin-top: 10px;
+  padding-top: 16px;
+}
+.glcg-changelog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.glcg-changelog-header h3 {
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+.glcg-changelog code {
+  background: #f3f3f3;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.9em;
+}
+.glcg-actions button {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  margin-left: 6px;
+}
+.glcg-actions button:hover {
+  background: #f0f0f0;
+}
+.glcg-actions button.primary {
+  background: #6e49cb;
+  color: #fff;
+  border-color: #6e49cb;
+}
+.glcg-actions button.primary:hover {
+  background: #5a3aa8;
+}
+.glcg-flash {
+  margin-left: 10px;
+  color: #2ea44f;
+  font-size: 13px;
+}
+.glcg-section {
+  margin-top: 16px;
+}
+.glcg-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 4px;
+  margin: 12px 0 8px;
+}
+.glcg-section-header h4 {
+  margin: 0;
+  font-size: 15px;
+}
+.glcg-section-header button {
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.glcg-section-header button:hover {
+  background: #f0f0f0;
+}
+.glcg-section-header .glcg-flash {
+  margin-left: 8px;
+  color: #2b8a3e;
+  font-size: 12px;
+}
+.glcg-issue-group h5 {
+  margin: 10px 0 6px;
+  font-size: 13px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.glcg-issue-group ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.glcg-issue-group li {
+  margin: 4px 0;
+  line-height: 1.5;
+}
+.glcg-issue-group a {
+  color: #6e49cb;
+  font-weight: 600;
+  text-decoration: none;
+  margin-right: 6px;
+}
+.glcg-issue-group a:hover {
+  text-decoration: underline;
+}
+.glcg-label {
+  display: inline-block;
+  background: #e9e7fa;
+  color: #4a3380;
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 4px;
+}
+.glcg-commits {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+}
+.glcg-commits li {
+  margin: 3px 0;
+  line-height: 1.5;
+}
+.glcg-commits code {
+  font-size: 0.85em;
+}
+.glcg-chip {
+  display: inline-block;
+  background: #e9e7fa;
+  color: #4a3380;
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 4px;
+  text-decoration: none;
+}
+.glcg-chip:hover {
+  background: #d4cdf2;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .glcg-icon-btn {
+    color: #a989eb;
+  }
+  .glcg-icon-btn:hover {
+    background: rgba(169, 137, 235, 0.15);
+    border-color: rgba(169, 137, 235, 0.3);
+  }
+
+  .glcg-modal {
+    background: #242424;
+    color: #ddd;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  }
+
+  /* Explicitly override GitLab's own heading colours which win via specificity */
+  .glcg-modal-header h2,
+  .glcg-changelog-header h3,
+  .glcg-section-header h4,
+  .glcg-issue-group h5 {
+    color: #ddd;
+  }
+
+  .glcg-modal-header {
+    background: #1c1c1c;
+    border-bottom-color: #3a3a3a;
+  }
+  .glcg-close {
+    color: #999;
+  }
+  .glcg-close:hover {
+    color: #eee;
+  }
+
+  .glcg-ac-wrap input[type="text"] {
+    background: #2e2e2e;
+    color: #ddd;
+    border-color: #4a4a4a;
+  }
+  .glcg-ac-list {
+    background: #2e2e2e;
+    border-color: #4a4a4a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+  .glcg-ac-item:hover {
+    background: #3b2d6e;
+  }
+  .glcg-ac-name {
+    color: #ddd;
+  }
+  .glcg-ac-path {
+    color: #888;
+  }
+
+  .glcg-row select,
+  .glcg-row input[type="text"],
+  .glcg-row button {
+    background: #2e2e2e;
+    color: #ddd;
+    border-color: #4a4a4a;
+  }
+  .glcg-row .glcg-generate {
+    background: #7c5cbf;
+    border-color: #7c5cbf;
+    color: #fff;
+  }
+  .glcg-row .glcg-generate:hover:not(:disabled) {
+    background: #9370d8;
+  }
+  .glcg-row .glcg-swap:hover {
+    background: #333;
+  }
+
+  .glcg-from-tag {
+    background: #333;
+    color: #ddd;
+  }
+  .glcg-status {
+    color: #999;
+  }
+
+  .glcg-wiki-panel {
+    background: #1e1a30;
+    border-color: #4a3a7a;
+  }
+  .glcg-wiki-row input[type="text"] {
+    background: #2e2e2e;
+    color: #ddd;
+    border-color: #4a4a4a;
+  }
+  .glcg-wiki-preview {
+    color: #999;
+  }
+  .glcg-wiki-preview code {
+    background: #2e2848;
+    color: #c9b8f0;
+  }
+  .glcg-wiki-footer button {
+    background: #2e2e2e;
+    color: #ddd;
+    border-color: #4a4a4a;
+  }
+  .glcg-wiki-footer button.primary {
+    background: #7c5cbf;
+    border-color: #7c5cbf;
+    color: #fff;
+  }
+  .glcg-wiki-footer button.primary:hover:not(:disabled) {
+    background: #9370d8;
+  }
+  .glcg-wiki-status {
+    color: #aaa;
+  }
+  .glcg-wiki-status a {
+    color: #a989eb;
+  }
+
+  .glcg-changelog {
+    border-top-color: #3a3a3a;
+  }
+  .glcg-changelog code {
+    background: #333;
+    color: #c9b8f0;
+  }
+
+  .glcg-actions button {
+    background: #2e2e2e;
+    color: #ddd;
+    border-color: #4a4a4a;
+  }
+  .glcg-actions button:hover {
+    background: #3a3a3a;
+  }
+  .glcg-actions button.primary {
+    background: #7c5cbf;
+    border-color: #7c5cbf;
+    color: #fff;
+  }
+  .glcg-actions button.primary:hover {
+    background: #9370d8;
+  }
+
+  .glcg-section-header {
+    border-bottom-color: #3a3a3a;
+  }
+  .glcg-section-header button {
+    background: #2e2e2e;
+    color: #ddd;
+    border-color: #4a4a4a;
+  }
+  .glcg-section-header button:hover {
+    background: #3a3a3a;
+  }
+
+  .glcg-issue-group h5 {
+    color: #888;
+  }
+  .glcg-issue-group a {
+    color: #a989eb;
+  }
+
+  .glcg-label {
+    background: #3b2d6e;
+    color: #c9b8f0;
+  }
+
+  .glcg-chip {
+    background: #3b2d6e;
+    color: #c9b8f0;
+  }
+  .glcg-chip:hover {
+    background: #4e3d8a;
+  }
+
+  .glcg-commits code {
+    background: #333;
+    color: #c9b8f0;
+  }
+  .glcg-commits a {
+    color: #a989eb;
+  }
+}
