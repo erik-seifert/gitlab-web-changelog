@@ -14,7 +14,7 @@
     return match ? match[1] : null;
   };
 
-  const getProjectId = async () => {
+  const getProjectInfo = async () => {
     const projectPath = getProjectPath();
     if (!projectPath) return null;
     const encoded = encodeURIComponent(projectPath);
@@ -23,8 +23,30 @@
       headers: { Accept: 'application/json' },
     });
     if (!resp.ok) throw new Error(`Project lookup failed: ${resp.status}`);
-    const data = await resp.json();
-    return data.id;
+    return resp.json();
+  };
+
+  const getProjectId = async () => {
+    const info = await getProjectInfo();
+    return info ? info.id : null;
+  };
+
+  const fetchBranches = async (projectId) => {
+    const resp = await fetch(
+      `${getGitLabBase()}/api/v4/projects/${projectId}/repository/branches?per_page=100`,
+      { credentials: 'same-origin', headers: { Accept: 'application/json' } }
+    );
+    if (!resp.ok) throw new Error(`Branches fetch failed: ${resp.status}`);
+    return resp.json();
+  };
+
+  const fetchCommitBranches = async (projectId, sha) => {
+    const resp = await fetch(
+      `${getGitLabBase()}/api/v4/projects/${projectId}/repository/commits/${encodeURIComponent(sha)}/refs?type=branch`,
+      { credentials: 'same-origin', headers: { Accept: 'application/json' } }
+    );
+    if (!resp.ok) return [];
+    return resp.json();
   };
 
   const fetchAllTags = async (projectId) => {
@@ -270,6 +292,50 @@
     return resp.json();
   };
 
+  const relativeDate = (dateStr) => {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const minutes = Math.floor(diff / 60000);
+    if (minutes < 60) return `vor ${minutes} Min.`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `vor ${hours} Std.`;
+    const days = Math.floor(hours / 24);
+    if (days < 30) return `vor ${days} Tag${days !== 1 ? 'en' : ''}`;
+    const months = Math.floor(days / 30);
+    if (months < 12) return `vor ${months} Monat${months !== 1 ? 'en' : ''}`;
+    return `vor ${Math.floor(months / 12)} Jahr${Math.floor(months / 12) !== 1 ? 'en' : ''}`;
+  };
+
+  // Wire up local branch autocomplete (client-side filtering, no API calls).
+  const setupBranchAutocomplete = (input, listEl, branches) => {
+    const show = (list) => {
+      if (!list.length) { listEl.hidden = true; return; }
+      listEl.innerHTML = list.map((b) =>
+        `<div class="glcg-ac-item" role="option" data-name="${escapeHtml(b.name)}">
+          <span class="glcg-ac-name">${escapeHtml(b.name)}</span>
+          <span class="glcg-ac-path">${relativeDate(b.commit.committed_date)}</span>
+        </div>`
+      ).join('');
+      listEl.querySelectorAll('.glcg-ac-item').forEach((item) => {
+        item.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          input.value = item.dataset.name;
+          listEl.hidden = true;
+        });
+      });
+      listEl.hidden = false;
+    };
+    const filter = () => {
+      const q = input.value.trim().toLowerCase();
+      const matches = q
+        ? branches.filter((b) => b.name.toLowerCase().includes(q)).slice(0, 10)
+        : branches.slice(0, 10);
+      show(matches);
+    };
+    input.addEventListener('input', filter);
+    input.addEventListener('focus', filter);
+    input.addEventListener('blur', () => setTimeout(() => { listEl.hidden = true; }, 150));
+  };
+
   // Wire up project autocomplete on an input + its adjacent .glcg-ac-list element.
   // onSelect(path) is called when the user picks a suggestion.
   const setupAutocomplete = (input, listEl, onSelect) => {
@@ -321,9 +387,16 @@
             <label>From tag (older):</label>
             <div class="glcg-from-tag"><strong>${escapeHtml(fromTag)}</strong></div>
           </div>
-          <div class="glcg-row">
+          <div class="glcg-row" id="glcg-to-tag-row">
             <label for="glcg-to-tag">To tag (newer):</label>
             <select id="glcg-to-tag"><option>Loading tags…</option></select>
+          </div>
+          <div class="glcg-row" id="glcg-to-branch-row" hidden>
+            <label for="glcg-to-branch">Branch:</label>
+            <div class="glcg-ac-wrap">
+              <input type="text" id="glcg-to-branch" autocomplete="off" spellcheck="false" placeholder="Branch suchen…" />
+              <div class="glcg-ac-list" role="listbox"></div>
+            </div>
           </div>
           <div class="glcg-row">
             <label for="glcg-issue-project">Issue project:</label>
@@ -355,6 +428,10 @@
     });
 
     const select = modalEl.querySelector('#glcg-to-tag');
+    const branchInput = modalEl.querySelector('#glcg-to-branch');
+    const toTagRow = modalEl.querySelector('#glcg-to-tag-row');
+    const toBranchRow = modalEl.querySelector('#glcg-to-branch-row');
+    const branchListEl = toBranchRow.querySelector('.glcg-ac-list');
     const generateBtn = modalEl.querySelector('.glcg-generate');
     const swapBtn = modalEl.querySelector('.glcg-swap');
     const status = modalEl.querySelector('.glcg-status');
@@ -362,6 +439,7 @@
     let currentFrom = fromTag;
     let projectId;
     let tags = [];
+    let compareMode = 'tag'; // 'tag' | 'branch'
 
     const issueProjectInput = modalEl.querySelector('#glcg-issue-project');
     setupAutocomplete(issueProjectInput, modalEl.querySelector('.glcg-ac-list'));
@@ -372,24 +450,61 @@
 
     try {
       status.textContent = 'Loading project info…';
-      projectId = await getProjectId();
+      const projectInfo = await getProjectInfo();
+      projectId = projectInfo.id;
+      const defaultBranchName = projectInfo.default_branch || 'main';
       const stored = await chrome.storage.sync.get({ [storageKey]: '' });
       issueProjectInput.value = stored[storageKey] || currentProjectPath || '';
       status.textContent = 'Loading tags…';
       tags = await fetchAllTags(projectId);
-      // tags come newest-first by default
+
+      // Populate tag dropdown
       const otherTags = tags.filter((t) => t.name !== currentFrom);
       select.innerHTML = otherTags
-        .map(
-          (t) =>
-            `<option value="${escapeHtml(t.name)}">${escapeHtml(t.name)}</option>`
-        )
+        .map((t) => `<option value="${escapeHtml(t.name)}">${escapeHtml(t.name)}</option>`)
         .join('');
-      // default: pick the tag *above* (newer than) currentFrom in the list
       const idx = tags.findIndex((t) => t.name === currentFrom);
       if (idx > 0) {
         select.value = tags[idx - 1].name;
       }
+
+      // If this is the newest tag (idx === 0), switch to branch comparison mode
+      if (idx === 0) {
+        toTagRow.hidden = true;
+        toBranchRow.hidden = false;
+        swapBtn.style.display = 'none';
+        compareMode = 'branch';
+
+        status.textContent = 'Loading branches…';
+        try {
+          const tagCommitSha = tags[0].commit.id;
+          const [branches, commitRefs] = await Promise.all([
+            fetchBranches(projectId),
+            fetchCommitBranches(projectId, tagCommitSha),
+          ]);
+          // Sort by most recently committed
+          branches.sort((a, b) =>
+            new Date(b.commit.committed_date) - new Date(a.commit.committed_date)
+          );
+          setupBranchAutocomplete(branchInput, branchListEl, branches);
+          // Pre-select the branch the tag was created on:
+          // 1. Branch whose HEAD is exactly the tag commit (tag was created at branch tip)
+          // 2. Default branch if it contains the tag commit
+          // 3. First branch that contains the tag commit
+          // 4. Default branch as last resort
+          const refNames = new Set(commitRefs.map((r) => r.name));
+          const exactMatch = branches.find((b) => b.commit.id === tagCommitSha && refNames.has(b.name));
+          const best = exactMatch
+            ? exactMatch.name
+            : refNames.has(defaultBranchName)
+              ? defaultBranchName
+              : (commitRefs[0] ? commitRefs[0].name : defaultBranchName);
+          branchInput.value = best;
+        } catch (e) {
+          branchInput.placeholder = 'Branches konnten nicht geladen werden';
+        }
+      }
+
       generateBtn.disabled = false;
       status.textContent = '';
     } catch (err) {
@@ -405,25 +520,22 @@
       currentFrom = newFrom;
       modalEl.querySelector('.glcg-from-tag').innerHTML =
         `<strong>${escapeHtml(newFrom)}</strong>`;
-      // rebuild select excluding new from
       const otherTags = tags.filter((t) => t.name !== newFrom);
       select.innerHTML = otherTags
-        .map(
-          (t) =>
-            `<option value="${escapeHtml(t.name)}" ${
-              t.name === newTo ? 'selected' : ''
-            }>${escapeHtml(t.name)}</option>`
+        .map((t) =>
+          `<option value="${escapeHtml(t.name)}" ${
+            t.name === newTo ? 'selected' : ''
+          }>${escapeHtml(t.name)}</option>`
         )
         .join('');
     });
 
     generateBtn.addEventListener('click', async () => {
-      const toTag = select.value;
-      if (!toTag) return;
+      const toRef = compareMode === 'branch' ? branchInput.value.trim() : select.value;
+      if (!toRef) return;
       const issueProjectPath = issueProjectInput.value.trim() || currentProjectPath;
-      // Persist choice per code project
       await chrome.storage.sync.set({ [storageKey]: issueProjectPath });
-      await generateChangelog(projectId, currentFrom, toTag, modalEl, issueProjectPath);
+      await generateChangelog(projectId, currentFrom, toRef, modalEl, issueProjectPath);
     });
   };
 
