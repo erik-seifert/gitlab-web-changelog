@@ -410,6 +410,35 @@
   background: #d4cdf2;
 }
 
+/* Compare mode toggle (branch / tag) */
+.glcg-mode-toggle {
+  display: inline-flex;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.glcg-mode-btn {
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #fff;
+  color: #555;
+  border: none;
+  border-right: 1px solid #ccc;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.glcg-mode-btn:last-child {
+  border-right: none;
+}
+.glcg-mode-btn:hover:not(.active) {
+  background: #f0f0f0;
+}
+.glcg-mode-btn.active {
+  background: #6e49cb;
+  color: #fff;
+}
+
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
   .glcg-icon-btn {
@@ -482,6 +511,22 @@
   }
   .glcg-row .glcg-swap:hover {
     background: #333;
+  }
+
+  .glcg-mode-toggle {
+    border-color: #4a4a4a;
+  }
+  .glcg-mode-btn {
+    background: #2e2e2e;
+    color: #aaa;
+    border-right-color: #4a4a4a;
+  }
+  .glcg-mode-btn:hover:not(.active) {
+    background: #3a3a3a;
+  }
+  .glcg-mode-btn.active {
+    background: #7c5cbf;
+    color: #fff;
   }
 
   .glcg-from-tag {
