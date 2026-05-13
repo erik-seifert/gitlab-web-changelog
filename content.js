@@ -870,9 +870,16 @@
       const slug = wikiSlugInput.value.trim();
       const full = parent ? `${parent}/${slug}` : slug;
       wikiPathPreview.textContent = full || '—';
-      wikiConfirmBtn.disabled = !slug || !wikiProjectInput.value.trim();
+      wikiConfirmBtn.disabled = !slug;
     };
-    wikiProjectInput.addEventListener('input', updateWikiPath);
+    let wikiSaveTimer = null;
+    wikiProjectInput.addEventListener('input', () => {
+      updateWikiPath();
+      clearTimeout(wikiSaveTimer);
+      wikiSaveTimer = setTimeout(() => {
+        chrome.storage.sync.set({ [wikiProjectStorageKey]: wikiProjectInput.value.trim() });
+      }, 500);
+    });
     wikiParentInput.addEventListener('input', updateWikiPath);
     wikiSlugInput.addEventListener('input', updateWikiPath);
 
@@ -881,9 +888,11 @@
       const stored = await chrome.storage.sync.get({
         [wikiProjectStorageKey]: '',
         [wikiParentStorageKey]: '',
+        [storageKey]: '',
       });
       const savedWikiProject = stored[wikiProjectStorageKey];
-      wikiProjectInput.value = (savedWikiProject && savedWikiProject !== codeProjectPath) ? savedWikiProject : '';
+      const issueProject = issueProjectInput.value.trim() || stored[storageKey];
+      wikiProjectInput.value = savedWikiProject || issueProject || codeProjectPath || '';
       wikiProjectInput.placeholder = codeProjectPath || 'group/project (type 3+ chars to search)';
       wikiParentInput.value = stored[wikiParentStorageKey];
       updateWikiPath();
@@ -897,7 +906,7 @@
     });
 
     wikiConfirmBtn.addEventListener('click', async () => {
-      const wikiProjectPath = wikiProjectInput.value.trim();
+      const wikiProjectPath = wikiProjectInput.value.trim() || codeProjectPath;
       const parent = wikiParentInput.value.trim();
       const slug = wikiSlugInput.value.trim();
       if (!slug || !wikiProjectPath) return;
