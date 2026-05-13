@@ -872,7 +872,14 @@
       wikiPathPreview.textContent = full || '—';
       wikiConfirmBtn.disabled = !slug || !wikiProjectInput.value.trim();
     };
-    wikiProjectInput.addEventListener('input', updateWikiPath);
+    let wikiSaveTimer = null;
+    wikiProjectInput.addEventListener('input', () => {
+      updateWikiPath();
+      clearTimeout(wikiSaveTimer);
+      wikiSaveTimer = setTimeout(() => {
+        chrome.storage.sync.set({ [wikiProjectStorageKey]: wikiProjectInput.value.trim() });
+      }, 500);
+    });
     wikiParentInput.addEventListener('input', updateWikiPath);
     wikiSlugInput.addEventListener('input', updateWikiPath);
 
@@ -881,9 +888,13 @@
       const stored = await chrome.storage.sync.get({
         [wikiProjectStorageKey]: '',
         [wikiParentStorageKey]: '',
+        [storageKey]: '',
       });
       const savedWikiProject = stored[wikiProjectStorageKey];
-      wikiProjectInput.value = (savedWikiProject && savedWikiProject !== codeProjectPath) ? savedWikiProject : '';
+      const issueProject = issueProjectInput.value.trim() || stored[storageKey];
+      wikiProjectInput.value = (savedWikiProject && savedWikiProject !== codeProjectPath)
+        ? savedWikiProject
+        : (issueProject && issueProject !== codeProjectPath ? issueProject : '');
       wikiProjectInput.placeholder = codeProjectPath || 'group/project (type 3+ chars to search)';
       wikiParentInput.value = stored[wikiParentStorageKey];
       updateWikiPath();
