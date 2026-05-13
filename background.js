@@ -95,8 +95,9 @@ chrome.storage.onChanged.addListener((changes, area) => {
 });
 
 // Re-sync on install/update/startup
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener(({ reason }) => {
   syncContentScripts();
+  if (reason === 'install') chrome.runtime.openOptionsPage();
 });
 chrome.runtime.onStartup.addListener(() => {
   syncContentScripts();
