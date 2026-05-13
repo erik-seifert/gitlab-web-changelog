@@ -454,7 +454,9 @@
       projectId = projectInfo.id;
       const defaultBranchName = projectInfo.default_branch || 'main';
       const stored = await chrome.storage.sync.get({ [storageKey]: '' });
-      issueProjectInput.value = stored[storageKey] || currentProjectPath || '';
+      const savedIssueProject = stored[storageKey];
+      issueProjectInput.value = (savedIssueProject && savedIssueProject !== currentProjectPath) ? savedIssueProject : '';
+      issueProjectInput.placeholder = currentProjectPath || 'group/project (type 3+ chars to search)';
       status.textContent = 'Loading tags…';
       tags = await fetchAllTags(projectId);
 
@@ -877,10 +879,12 @@
     header.querySelector('.glcg-publish-wiki').addEventListener('click', async () => {
       if (!wikiPanel.hidden) { wikiPanel.hidden = true; return; }
       const stored = await chrome.storage.sync.get({
-        [wikiProjectStorageKey]: codeProjectPath || '',
+        [wikiProjectStorageKey]: '',
         [wikiParentStorageKey]: '',
       });
-      wikiProjectInput.value = stored[wikiProjectStorageKey];
+      const savedWikiProject = stored[wikiProjectStorageKey];
+      wikiProjectInput.value = (savedWikiProject && savedWikiProject !== codeProjectPath) ? savedWikiProject : '';
+      wikiProjectInput.placeholder = codeProjectPath || 'group/project (type 3+ chars to search)';
       wikiParentInput.value = stored[wikiParentStorageKey];
       updateWikiPath();
       wikiPanel.hidden = false;
