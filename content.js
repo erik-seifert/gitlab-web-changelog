@@ -442,7 +442,7 @@
     let compareMode = 'tag'; // 'tag' | 'branch'
 
     const issueProjectInput = modalEl.querySelector('#glcg-issue-project');
-    setupAutocomplete(issueProjectInput, modalEl.querySelector('.glcg-ac-list'));
+    setupAutocomplete(issueProjectInput, issueProjectInput.closest('.glcg-ac-wrap').querySelector('.glcg-ac-list'));
 
     // ---------- Load project info + saved issue project ----------
     const currentProjectPath = getProjectPath();
